@@ -22,4 +22,6 @@ type Query {
 
 type Mutation {
   createTask(title: String!, description: String, status: String): Task!
+  updateTask(id: Float!, title: String, description: String, status: String): Task!
+  deleteTask(id: Float!): Task!
 }

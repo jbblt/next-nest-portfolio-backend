@@ -19,4 +19,19 @@ export class TaskResolver {
   tasks() {
     return this.taskService.findAll();
   }
+  @Mutation(() => Task)
+  updateTask(
+      @Args('id') id: number,
+      @Args('title', { nullable: true }) title?: string,
+      @Args('description', { nullable: true }) description?: string,
+      @Args('status', { nullable: true }) status?: string,
+  ) {
+    return this.taskService.update(id, { title, description, status });
+  }
+
+  @Mutation(() => Task)
+  deleteTask(@Args('id') id: number) {
+    return this.taskService.delete(id);
+  }
+
 }
