@@ -5,9 +5,13 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TaskModule } from './task/task.module';
+import {APP_GUARD} from "@nestjs/core";
+import {GqlAuthGuard} from "./auth/gql-auth.guard";
+import {AuthModule} from "./auth/auth.module";
 
 @Module({
   imports: [
+    AuthModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
@@ -16,6 +20,9 @@ import { TaskModule } from './task/task.module';
     TaskModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, {
+    provide: APP_GUARD,
+    useClass: GqlAuthGuard
+  }],
 })
 export class AppModule {}

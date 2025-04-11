@@ -5,18 +5,27 @@ const prisma = new PrismaClient();
 
 @Injectable()
 export class TaskService {
-  findAll() {
-    return prisma.task.findMany();
+  findAll(userId: string) {
+    return prisma.task.findMany({ where: { userId }});
   }
 
-  create(data: { title: string; description?: string; status?: string }) {
-    return prisma.task.create({ data });
+  create(data: {
+    title: string;
+    description?: string;
+    status?: string;
+    userId: string
+  }) {
+    return prisma.task.create({ data  });
   }
 
-  async update(id: number, data: { title?: string; description?: string; status?: string }) {
+  async update(id: number, p: {
+    description: string | undefined;
+    title: string | undefined;
+    status: string | undefined
+  }, data: { title?: string; description?: string; status?: string; userId: string }) {
     try {
       return await prisma.task.update({
-        where: { id },
+        where: { id, userId: data.userId },
         data,
       });
     } catch (error) {
@@ -29,9 +38,9 @@ export class TaskService {
     }
   }
 
-  delete(id: number) {
+  delete(id: number, userId: string) {
     return prisma.task.delete({
-      where: { id },
+      where: { id, userId },
     });
   }
 }
