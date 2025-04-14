@@ -25,8 +25,11 @@ model Task {
 }
 
 model User {
-  id    String @id @default(uuid())
-  email String @unique
-
-  tasks Task[]
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  tasks     Task[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

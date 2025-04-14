@@ -9,6 +9,8 @@ import {APP_GUARD} from "@nestjs/core";
 import {GqlAuthGuard} from "./auth/gql-auth.guard";
 import {AuthModule} from "./auth/auth.module";
 import {AppConfigModule} from "./config/config.module";
+import {PrismaModule} from "./prisma/prisma.module";
+import {UserModule} from "./user/user.module";
 
 @Module({
   imports: [
@@ -20,9 +22,13 @@ import {AppConfigModule} from "./config/config.module";
       playground: true,
     }),
     TaskModule,
+    PrismaModule,
+      UserModule
   ],
   controllers: [AppController],
-  providers: [AppService, {
+  providers: [
+    AppService,
+    {
     provide: APP_GUARD,
     useClass: GqlAuthGuard
   }],

@@ -1,33 +1,30 @@
-import {ExecutionContext, Injectable, UnauthorizedException} from '@nestjs/common';
+import {ExecutionContext, Injectable} from '@nestjs/common';
 import {AuthGuard} from '@nestjs/passport';
 import {GqlExecutionContext} from '@nestjs/graphql';
+import {Reflector} from "@nestjs/core";
+import {IS_PUBLIC_KEY} from "./public.decorator";
 
 @Injectable()
 export class GqlAuthGuard extends AuthGuard("jwt") {
-    getRequest(context: ExecutionContext) {
-        const ctx = GqlExecutionContext.create(context);
-        const req = ctx.getContext().req;
-
-        console.log("📥 GqlAuthGuard > Header Authorization reçu :", req.headers.authorization);
-
-        return req;
+    constructor(private reflector: Reflector) {
+        super();
     }
 
-    handleRequest(err, user, info) {
-        if (err) {
-            console.error("❌ handleRequest > Erreur Passport :", err.message);
+    canActivate(context: ExecutionContext) {
+        const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        if (isPublic) {
+            return true;
         }
 
-        if (!user) {
-            console.warn("🚫 handleRequest > Auth échouée. Info :", info?.message || info);
-        }
+        return super.canActivate(context);
+    }
 
-        console.log("👤 handleRequest > Utilisateur auth :", user);
-
-        if (err || !user) {
-            throw err || new UnauthorizedException();
-        }
-
-        return user;
+    getRequest(context: ExecutionContext) {
+        const ctx = GqlExecutionContext.create(context);
+        return ctx.getContext().req;
     }
 }

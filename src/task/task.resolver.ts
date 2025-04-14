@@ -4,6 +4,7 @@ import { Task } from "./task.model";
 import { TaskService } from "./task.service";
 import {GqlAuthGuard} from "../auth/gql-auth.guard";
 import {CurrentUser} from "../auth/current-user.decorator";
+import { Int } from '@nestjs/graphql';
 
 @Resolver(() => Task)
 export class TaskResolver {
@@ -30,7 +31,7 @@ export class TaskResolver {
   @Mutation(() => Task)
   updateTask(
       @CurrentUser() user: any,
-      @Args("id") id: number,
+      @Args("id", { type: () => Int }) id: number,
       @Args("title", { nullable: true }) title?: string,
       @Args("description", { nullable: true }) description?: string,
       @Args("status", { nullable: true }) status?: string,
@@ -42,7 +43,7 @@ export class TaskResolver {
   @Mutation(() => Task)
   deleteTask(
       @CurrentUser() user: any,
-      @Args("id") id: number,
+      @Args("id", { type: () => Int }) id: number,
   ) {
     return this.taskService.delete(id, user.userId);
   }

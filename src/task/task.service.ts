@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaClient, Prisma } from '@prisma/client';
+import {  Prisma } from '@prisma/client';
+import {PrismaService} from "../prisma/prisma.service";
 
-const prisma = new PrismaClient();
 
 @Injectable()
 export class TaskService {
+  constructor(private prisma: PrismaService) {}
+
   findAll(userId: string) {
-    return prisma.task.findMany({ where: { userId }});
+    return this.prisma.task.findMany({ where: { userId }});
   }
 
   create(data: {
@@ -15,7 +17,7 @@ export class TaskService {
     status?: string;
     userId: string
   }) {
-    return prisma.task.create({ data  });
+    return this.prisma.task.create({ data  });
   }
 
   async update(id: number, p: {
@@ -24,7 +26,7 @@ export class TaskService {
     status: string | undefined
   }, data: { title?: string; description?: string; status?: string; userId: string }) {
     try {
-      return await prisma.task.update({
+      return await this.prisma.task.update({
         where: { id, userId: data.userId },
         data,
       });
@@ -39,7 +41,7 @@ export class TaskService {
   }
 
   delete(id: number, userId: string) {
-    return prisma.task.delete({
+    return this.prisma.task.delete({
       where: { id, userId },
     });
   }
