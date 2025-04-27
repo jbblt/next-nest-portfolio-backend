@@ -12,5 +12,8 @@ export class User {
   name?: string;
 
   @Field({ nullable: true })
+  passwordHash?: string;
+
+  @Field({ nullable: true })
   image?: string;
 }

@@ -25,4 +25,5 @@ type Mutation {
   updateTask(id: Int!, title: String, description: String, status: String): Task!
   deleteTask(id: Int!): Task!
   loginUser(email: String!): String!
+  loginUserWithPassword(email: String!, password: String!): String!
 }
