@@ -5,12 +5,12 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { TaskModule } from './task/task.module';
-import {APP_GUARD} from "@nestjs/core";
-import {GqlAuthGuard} from "./auth/gql-auth.guard";
-import {AuthModule} from "./auth/auth.module";
-import {AppConfigModule} from "./config/config.module";
-import {PrismaModule} from "./prisma/prisma.module";
-import {UserModule} from "./user/user.module";
+import { APP_GUARD } from '@nestjs/core';
+import { GqlAuthGuard } from './auth/gql-auth.guard';
+import { AuthModule } from './auth/auth.module';
+import { AppConfigModule } from './config/config.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -23,14 +23,15 @@ import {UserModule} from "./user/user.module";
     }),
     TaskModule,
     PrismaModule,
-      UserModule
+    UserModule,
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
-    provide: APP_GUARD,
-    useClass: GqlAuthGuard
-  }],
+      provide: APP_GUARD,
+      useClass: GqlAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
