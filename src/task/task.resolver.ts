@@ -1,10 +1,9 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Mutation, Query, Resolver } from '@nestjs/graphql';
+import { Args, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { Task } from './task.model';
 import { TaskService } from './task.service';
 import { GqlAuthGuard } from '../auth/gql-auth.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
-import { Int } from '@nestjs/graphql';
 import { CurrentUserType } from '../types/user';
 
 @Resolver(() => Task)

@@ -16,4 +16,10 @@ export class User {
 
   @Field({ nullable: true })
   image?: string;
+
+  @Field(() => Date)
+  createdAt: Date;
+
+  @Field(() => Date)
+  updatedAt: Date;
 }

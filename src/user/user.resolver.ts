@@ -6,6 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { Public } from '../auth/public.decorator';
 import { UnauthorizedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
+import { LoginResponse } from './dto/login-response.dto';
 
 @Resolver(() => User)
 export class UserResolver {
@@ -28,18 +29,22 @@ export class UserResolver {
   }
 
   @Public()
-  @Mutation(() => String)
+  @Mutation(() => LoginResponse)
   async loginUserWithPassword(
     @Args('email') email: string,
     @Args('password') password: string,
-  ): Promise<string> {
+  ): Promise<LoginResponse> {
     const user = await this.userService.findByEmail(email);
 
     if (!user || !user.passwordHash) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
+    const isPasswordValid = (await bcrypt.compare(
+      password,
+      user.passwordHash,
+    )) as boolean;
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -47,8 +52,19 @@ export class UserResolver {
 
     const payload = { sub: user.id, email: user.email };
 
-    return await this.jwtService.signAsync(payload, {
+    const token = await this.jwtService.signAsync(payload, {
       secret: this.config.get('JWT_SECRET'),
     });
+    return {
+      token,
+      user: {
+        id: user.id,
+        name: user.name ?? undefined,
+        email: user.email,
+        image: user.image ?? undefined,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    };
   }
 }
